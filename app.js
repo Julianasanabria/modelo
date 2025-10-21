@@ -1,29 +1,39 @@
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
+
+// Importación de rutas
 import direccionNucleoRoutes from './routes/coreDirectionRoutes.js';
-import colegios from "./routes/Colegio.js";
+import colegiosRoutes from './routes/Colegio.js';
+import headquartersRoutes from './routes/headquarters.js';
 
 const app = express();
 
 // Middleware para parsear JSON
 app.use(express.json());
 
-// Rutas
+// Rutas principales
 app.use('/api', direccionNucleoRoutes);
-app.use(colegios);
+app.use('/api', colegiosRoutes);
+app.use('/api/sedes', headquartersRoutes);
 
-// Middleware para manejo de errores básico (opcional)
+// Middleware para manejo de errores
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('🛑 Error:', err.stack);
   res.status(500).json({ error: 'Error interno del servidor' });
 });
 
-// Puerto y escucha
+// Conexión a MongoDB
+mongoose
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('✅ MongoDB conectado correctamente'))
+  .catch((err) => console.error('❌ Error al conectar con MongoDB:', err));
+
+// Iniciar servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-  mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('MongoDB conectado'))
-    .catch(err => console.error('Error de conexión MongoDB:', err));
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });
