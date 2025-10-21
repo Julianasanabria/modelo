@@ -1,6 +1,6 @@
 import Headquarters from "../models/headquarters.js";
 
-const httpSede = {
+const httpHeadquarters = {
     listAll: async (req, res) => {
         try {
             const headquarters = await Headquarters.find()
@@ -153,4 +153,4 @@ const httpSede = {
     }
 };
 
-export default httpSede
+export default httpHeadquarters
